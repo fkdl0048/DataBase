@@ -116,3 +116,70 @@ Candidate Key 중에서 선택한 것
 따로 조사
 
 ## 03/16
+
+### 유니온
+
+유니온은 두 개의 테이블을 합치는 것
+
+degree가 같아야하고 어트리뷰트의 도메인도 같아야 한다.  
+
+집합의 역할
+
+$$ \pi customer\_name(borrower) \cap customer\_name(depositor) $$
+
+*교집합*
+
+$$ \pi customer\_name(borrower) \cup customer\_name(depositor) $$
+
+### Carteian Product
+
+테이블을 곱하는 것
+
+$$ borrower \times depositor $$
+
+즉, 각각의 cadinality를 곱한 것 7*8 = 56
+
+```text
+12
+34
+*
+ab
+cd
+ef
+```
+
+```text
+12ab
+12cd
+12ef
+34ab
+34cd
+34ef
+```
+
+cartinal product는 원하는 값을 찾기 위해 테이블을 합치고 필요한 값을 계산한다.
+
+### Rename
+
+테이블의 이름을 바꾸는 것
+
+$$ \rho renamed\_relation(original\_relation) $$
+
+가장 큰 수를 찾는 예제..
+
+### join
+
+공통된 애트리뷰트만 조합해줌.
+
+곱하기보단 같거나 작을 수 있음
+
+공통된 애트리뷰트가 없으면 곱하기와 같음
+
+같은 애트리뷰트를 곱하자..
+
+### division
+
+$$ relation_1 \div relation_2 $$
+
+연관된 애트리뷰트는 소거하고 겹치는 degree를 가져온다.
+
