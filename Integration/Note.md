@@ -205,6 +205,8 @@ $$ ^\pi attribute1, attribute2...(relation) $$
 
 해당 하는 애트리뷰트만 출력한다.
 
+**Projection은 중복을 제거한다.**
+
 #### Nested
 
 > 예제
@@ -212,6 +214,90 @@ $$ ^\pi attribute1, attribute2...(relation) $$
 $$ ^\pi loan\_number(^\sigma amount > 1200(loan)) $$
 
 이런식으로 반환값이 Relation인 연산자를 중첩해서 사용할 수 있다.
+
+#### Union
+
+> 예제
+
+$$ ^\pi branch\_name(borrower) \cup ^\pi branch\_name(depositor) $$
+
+> 문법
+
+$$ (relation1)\cup(relation2) $$
+
+두 Relation의 합집합을 반환한다.
+
+**degree가 같아야 한다.**
+
+애트리뷰트의 도메인도 같아야 한다.
+
+마찬가지로 중복을 제거한다.
+
+#### Intersection
+
+> 예제
+
+$$ ^\pi branch\_name(borrower) \cap ^\pi branch\_name(depositor) $$
+
+> 문법
+
+$$ (relation1)\cap(relation2) $$
+
+두 Relation의 교집합을 반환한다.
+
+#### Difference
+
+> 예제
+
+$$ ^\pi branch\_name(borrower) - ^\pi branch\_name(depositor) $$
+
+> 문법
+
+$$ (relation1)-(relation2) $$
+
+relation1에서 relation2를 뺀 차집합을 반환한다.
+
+서로 위치가 바뀌면 결과값도 바뀐다.
+
+#### Cartesian Product
+
+> 예제
+
+$$ ^\pi branch\_name(borrower) \times ^\pi branch\_name(depositor) $$
+
+> 문법
+
+$$ (relation1)\times(relation2) $$
+
+두 Relation의 Cartesian Product를 반환한다.
+
+즉, 곱하기..
+
+relation1의 tuple a에 대해서 relation2의 모든 tuple을 곱한다.  
+
+즉, relation1의 tuple의 개수 * relation2의 tuple의 개수 만큼 tuple이 생성된다.
+
+애트리뷰트의 경우는 relation1의 모든 애트리뷰트와 relation2의 모든 애트리뷰트를 합친다.
+
+일치하는 key를 찾기 위해서 사용한다. (기본 데이터베이스 속성)  
+
+#### Rename
+
+> 문법
+
+$$ \rho new\_relation\_name(original\_relation) $$
+
+relation의 이름을 바꾼다.
+
+이를 사용한 예제로 Relation의 튜플의 애트리뷰트의 최대값을 구하는 예제
+
+$$ \pi _{a1.balance}(\sigma _{a1.balance < a2.balance} (\rho_{a1}(account) \times \rho_{a2}(account)))$$
+
+즉 가장 큰 값을 제외한 나머지 프로젝션을 구하고 해당 Relation을 차집합하여 구한다.
+
+$$ \pi _{balance}(account) - \pi _{a1.balance}(\sigma _{a1.balance < a2.balance} (\rho_{a1}(account) \times \rho_{a2}(account))) $$
+
+48분 3-1
 
 ## SQL
 
