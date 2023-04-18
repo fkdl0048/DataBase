@@ -851,6 +851,9 @@ select FROM_UNIXTIME(UNIX_TIMESTAMP(CURDATE()));
 
 // 날짜 변환
 select dayofweek(curdate()), dayofMonth(curdate()), month(curdate());
+
+// 날짜 형식 변환
+select STR_TO_DATE('March 30 2023', '%M %e %Y');   
 ```
 
 * CURDATE() 현재 날짜를 반환
@@ -862,10 +865,13 @@ select dayofweek(curdate()), dayofMonth(curdate()), month(curdate());
 * DAYOFMONTH() 일을 반환
 * DAYOFYEAR() 년도의 일을 반환
 * MONTH() 월을 반환
+* STR_TO_DATE() 문자열을 날짜로 변환
 
 ![image](https://user-images.githubusercontent.com/84510455/232697956-fa92afd0-2802-407f-ac55-9e27d6702d43.png)
 
 ![image](https://user-images.githubusercontent.com/84510455/232700399-abfa5b23-70c7-4879-8e7d-d17bdd74b650.png)
+
+![image](https://user-images.githubusercontent.com/84510455/232705906-95ddc15a-89e8-49de-8e27-d97b55e729cb.png)
 
 ### Aggregate functions
 
