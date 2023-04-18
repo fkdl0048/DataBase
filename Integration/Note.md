@@ -193,6 +193,8 @@ predicate: 조건
 
 $$ ^\sigma amount > 1200(loan) $$
 
+![image](https://user-images.githubusercontent.com/84510455/232634505-5ae78dcc-c655-4c33-bc2f-e03e4c9f2401.png)
+
 #### Projection
 
 > 예제
@@ -207,6 +209,8 @@ $$ ^\pi attribute1, attribute2...(relation) $$
 
 **Projection은 중복을 제거한다.**
 
+![image](https://user-images.githubusercontent.com/84510455/232634626-f2174469-7c5b-4ea5-a6fd-b5056e1fdc51.png)
+
 #### Nested
 
 > 예제
@@ -214,6 +218,8 @@ $$ ^\pi attribute1, attribute2...(relation) $$
 $$ ^\pi loan\_number(^\sigma amount > 1200(loan)) $$
 
 이런식으로 반환값이 Relation인 연산자를 중첩해서 사용할 수 있다.
+
+![image](https://user-images.githubusercontent.com/84510455/232634643-6f09cc36-77af-4b27-9fac-29fc7c3f344d.png)
 
 #### Union
 
@@ -287,6 +293,8 @@ relation1의 tuple a에 대해서 relation2의 모든 tuple을 곱한다.
 
 $$ \rho new\_relation\_name(original\_relation) $$
 
+* 예제 1
+
 relation의 이름을 바꾼다.
 
 이를 사용한 예제로 Relation의 튜플의 애트리뷰트의 최대값을 구하는 예제
@@ -297,7 +305,173 @@ $$ \pi _{a1.balance}(\sigma _{a1.balance < a2.balance} (\rho_{a1}(account) \time
 
 $$ \pi _{balance}(account) - \pi _{a1.balance}(\sigma _{a1.balance < a2.balance} (\rho_{a1}(account) \times \rho_{a2}(account))) $$
 
-48분 3-1
+* 예제 2
+
+마찬가지로 이름을 변경하고 cartesian product를 하여 원하는 값을 추출해낼 수 있도록 한다.
+
+#### Join
+
+> 문법
+
+$$ (relation1)\bowtie(relation2) $$
+
+두 Relation을 조인한다.
+
+두 Relation의 애트리뷰트의 도메인이 같아야 한다.
+
+*nuatural join*
+
+$$ \pi _{branch\_name(\sigma _{customer_city="Harrison"(customer)} \bowtie depositor \bowtie account)} $$
+
+#### Theta Join
+
+> 문법
+
+$$ (relation1)\bowtie_{\theta}(relation2) = \sigma_{\theta}(relation_1 \times relation_2)$$
+
+#### Division
+
+> 문법
+
+$$ (relation1) \div (relation2) $$
+
+![image](https://user-images.githubusercontent.com/84510455/232633002-147ad888-f030-4d89-ac6d-85a958daeda6.png)
+
+![image](https://user-images.githubusercontent.com/84510455/232635108-b88df32d-97b0-4612-9974-604f5cc7e8ed.png)
+
+#### Generalized Projection
+
+> 문법
+
+$$ \pi_{F1, F2 ... AS name(Relation)}$$
+
+#### Aggregation Function
+
+> 문법
+
+![image](https://user-images.githubusercontent.com/84510455/232636490-68571d67-9680-45f9-accd-453ceae977d7.png)
+
+$$ g_{sum(salary)}(pt\_works) $$
+
+여기서 그룹을 지어서 그룹별로 aggregation function을 적용할 수 있다.
+
+$$_{branch_name}g_{sum(salary)}(pt\_works) $$
+
+![image](https://user-images.githubusercontent.com/84510455/232637199-5fb18db4-f48b-4425-9e3a-cd4634fa39d8.png)
+
+#### Outer Join
+
+매칭이 안되더라도 출력하고 싶을 때 사용한다.
+
+*null*
+
+> 문법
+
+![image](https://user-images.githubusercontent.com/84510455/232638462-4e05bdf2-7ccc-40e8-8f5d-03672864b436.png)
+
+Left인지 Right인지 조건을 잘 보고 사용할 것
+
+Full Outer Join은 은 둘다 조건을 적용
+
+#### Outer Union  
+
+> 문법
+
+$$ r \cup^+ s $$
+
+![image](https://user-images.githubusercontent.com/84510455/232638777-7bf33ae9-44c1-4994-8398-262390a010c4.png)
+
+#### Null Value
+
+![image](https://user-images.githubusercontent.com/84510455/232639418-3efdcb5f-c20d-4dee-9616-db88c4df039c.png)
+
+* SELECT 연산은 똑같이 진행한다.  
+
+$$ \sigma_{p}(r) $$
+
+자체가 Relation의 모든 튜플을 p의 조건으로 검사한다.
+
+null일 경우 제외..
+
+* JOIN 연산은 null값을 삭제한다.
+
+* PROJECT 연산은 중복이 제거 되기 때문에 Null값이 하나만 남는다.
+
+*Null값이 중복이 있다면..*
+
+* AGGREGATION 연산은 null값을 제외하고 진행한다.
+
+#### DML 예제
+
+##### DELETION  
+
+> 문법
+
+$$ r \rightarrow r - E $$
+
+r에서 E를 삭제한다.
+
+> 예제
+
+$$ depositor \rightarrow depositor - \sigma_{customer_name = "Smith"(depositor)} $$
+
+*Smith튜플만 제거한 릴레이션 반환*
+
+$$ loan \rightarrow loan - \sigma_{amount \ge 1000 \land amount \le 1300}(loan) $$
+
+*전체 loan에서 amount가 1000과 1300사이의 값만 찾기*
+
+
+![image](https://user-images.githubusercontent.com/84510455/232641109-4763b073-7760-4788-bef3-6202c9272b89.png)
+
+"Brooklyn"만 지우는 예제인데 nutural join을 사용하여 Relation을 연결하고 Selection을 사용하여 "Brooklyn"튜플만 조회한다.  
+
+Projection을 사용하여 삭제할 Relation에 맞는 Degree, Domain을 가진 Relation을 만들어 Deletion을 진행한다.
+
+##### INSERTION
+
+> 문법
+
+$$ r \rightarrow r \cup E $$
+
+r에 E를 추가한다.
+
+> 예제
+
+$$ account \rightarrow account \cup \{(A-973, "Perryidge", 1200)\} $$
+
+![image](https://user-images.githubusercontent.com/84510455/232643766-d69e0b75-acb5-4879-92cf-d7e05ba197a1.png)
+
+가장 먼저 Relation을 Join하여 Perryidge만 Selection을 한다. (r1)
+
+projection을 통해 필요한 Degree, Domain을 가진 Relation을 만든다. (r2)
+
+r2에 Cartesian Product을 통해 200을 추가한다.
+
+해당 Relation을 account에 추가한다.
+
+depositor에는 r1을 Projection하여 추가한다.
+
+$$ r1 \rightarrow \sigma _{branch\_name = "Perryidge"}(borrower \Join loan) $$
+$$ r2 \rightarrow \pi _{loan_number, branch_name}(r1) $$
+$$ account \rightarrow account \cup (r_2 \times {(200)}) $$
+$$ depositor \rightarrow depositor \cup \pi _{customer_name, loan_number}(r1) $$
+
+##### UPDATE
+
+Generalized Projection을 사용해서 계산한다.
+
+> 문법
+
+$$ r \rightarrow \pi _{F_1, F_2, ...F_n}(r) $$
+
+> 예제
+
+Relation의 balance를 5% 증가시킨다.
+
+$$ account \rightarrow \pi _{account_number, branch_name, balance * 1.05 as balance}(account) $$
+
+![image](https://user-images.githubusercontent.com/84510455/232645636-c25cf58a-3267-4eb5-839d-ecd4012642ee.png)
 
 ## SQL
 
