@@ -854,6 +854,9 @@ select dayofweek(curdate()), dayofMonth(curdate()), month(curdate());
 
 // 날짜 형식 변환
 select STR_TO_DATE('March 30 2023', '%M %e %Y');   
+
+// 날짜 형식 변환
+select DATE_FORMAT('2021-03-30', '%Y-%m-%d');
 ```
 
 * CURDATE() 현재 날짜를 반환
@@ -865,7 +868,7 @@ select STR_TO_DATE('March 30 2023', '%M %e %Y');
 * DAYOFMONTH() 일을 반환
 * DAYOFYEAR() 년도의 일을 반환
 * MONTH() 월을 반환
-* STR_TO_DATE() 문자열을 날짜로 변환
+* STR_TO_DATE() 문자열을 날짜로 변환 
 
 ![image](https://user-images.githubusercontent.com/84510455/232697956-fa92afd0-2802-407f-ac55-9e27d6702d43.png)
 
@@ -875,28 +878,340 @@ select STR_TO_DATE('March 30 2023', '%M %e %Y');
 
 ### Aggregate functions
 
+> 집계 관련 빌트인 함수
+
+```sql
+// 테스트 테이블
+create or replace table a (v int);
+
+// 값 넣기
+insert into a values (30), (40), (50), (60), (25);
+
+// 평균, 최대, 최소, 합, 개수
+select avg(v), max(v), min(v), sum(v), count(v) from a;
+
+// 중복 제거 개수
+select count(v), count(distinct v) from a;
+```
+
+* AVG() 평균을 반환
+* COUNT() 행의 개수를 반환
+* COUNT(DISTINCT) 중복을 제거한 행의 개수를 반환
+* MAX() 최대값을 반환
+* MIN() 최소값을 반환
+* SUM() 합을 반환
+* STD() 표준편차를 반환
+
 ### Numeric functions
+
+> 수학 관련 빌트인 함수
+
+```sql
+// 제곱
+select pow(5,3 ) * 4;
+
+// 내림
+select floor(35.55);
+
+// 랜덤 난수 생성 (5~15)
+select floor(rand() * 11 + 5);
+```
+
+* 사칙연산 가능
+* ()사용
+* pow
+* sort
+* FLOOR() 내림
+* CEILING() 올림
+* RAND() 난수 생성
 
 ### Control flow functions
 
-### Bit Functions and Operators
+> 제어 흐름 관련 빌트인 함수
+
+```sql
+// CASE OPERATOR
+select case when v >= 80 then 'A' when v >= 60 then 'P' else 'F' END from a;
+
+//IF FUNCTION
+select if(v >= 60, 'PASS', 'FAIL') from a;
+```
+
+* CASE WHEN THEN END 조건문
 
 ### Encryption, Hashing and Compression Functions
 
-### information functions
+> 암호화, 해싱, 압축 관련 빌트인 함수
 
-### miscellaneous functions
+```sql
+// 데이터 해싱
+select sha2(v, 256) from b;
 
-### dynamic column functions
+// 데이터 암호화
+insert into grade values ('jack', password('1234'));
+
+// 데이터 인코딩 디코딩
+select encode('4321', 'my_code');
+
+select decode(encode('4321', 'my_code'), 'your_code'); // 실패
+
+select decode(encode('4321', 'my_code'), 'my_code'); // 성공
+
+// 데이터 압축
+select compress('Hello DB'); 
+
+// 데이터 압축 해제
+select uncompress(compress('Hello DB'));
+```
+
+* SHA2() 문자열을 SHA2 해시로 변환
+* PASSWORD() 문자열을 암호화
+* ENCODE() 문자열을 암호화
+* DECODE() 암호화된 문자열을 복호화
+* COMPRESS() 문자열을 압축
+* UNCOMPRESS() 압축된 문자열을 복원
+
+![image](https://user-images.githubusercontent.com/84510455/232781644-eb71477f-0b56-4662-821f-70543d36f90c.png)
+
+![image](https://user-images.githubusercontent.com/84510455/232782316-ad29c5ab-4829-4290-8a45-aec46d83484f.png)
+
+![image](https://user-images.githubusercontent.com/84510455/232783058-542f2b6b-7e44-481a-b103-d07686f894e7.png)
 
 ### geographic functions
 
+> 지리 관련 빌트인 함수
+
+```sql
+// point 데이터 타입 테이블 생성
+create or replace table point (point point);
+
+// point 데이터 타입 테이블에 값 넣기
+insert into point values (point(20, 10), point(10, 20), point(20, 20));
+
+// point 데이터 타입 테이블 조회
+select astext(point) from point;
+
+// x, y 좌표 조회
+select astext(point), x(point), y(point) from point;
+
+// 두 좌표간 거리 계산
+select st_distance(point, point(100,100)) from point;
+```
+
+* POINT() 좌표를 생성
+* ASTEXT() 좌표를 문자열로 변환
+* X() 좌표의 x값을 반환
+* Y() 좌표의 y값을 반환
+* ST_DISTANCE() 두 좌표간 거리를 반환
+
+![image](https://user-images.githubusercontent.com/84510455/232786128-510afb42-58d7-4665-ac9b-8f6fb532e4e2.png)
+
 ### JSON functions
 
-### spider functions
+> JSON 관련 빌트인 함수
 
-### window functions
+```sql
+// json 데이터 타입 테이블 생성
+create table test (a json);
+
+// json 데이터 타입 테이블에 값 넣기
+insert into status values (432156, 'kildong', '{"temperature" : 36.5, "humidty" : 60.0}');
+
+// json 데이터 값 테이블 조회 (없으면 null)
+select json_value(sensing_values, '$.temperature') from status;
+
+// json 데이터 타입 테이블 조회 (없으면 null)
+select json_type(json_value(sensing_values, '$.temperature')) from status;
+
+// json 데이터 값 존재 여부 확인
+select json_exists(sensing_values, '$.step') from status;
+
+// json 데이터 값 상세 정보 확인
+select json_detailed(sensing_values) from status;
+
+// json 데이터 키 목록 확인
+select sensing_values ,json_keys(sensing_values) from status;
+
+// json 데이터 타입으로 변환
+select json_objectagg(id, name) from status;
+```
+
+* JSON_VALUE() JSON 문자열에서 특정 경로의 값을 반환
+* JSON_TYPE() JSON 문자열에서 특정 경로의 데이터 타입을 반환
+* JSON_EXISTS() JSON 문자열에서 특정 경로의 값이 존재하는지 확인
+* JSON_DETAIL() JSON 문자열에서 특정 경로의 값의 상세 정보를 반환
+* JSON_KEYS() JSON 문자열에서 특정 경로의 키 목록을 반환
+* JSON_LENGTH() JSON 문자열에서 특정 경로의 값의 개수를 반환
+* JSON_OBJECTAGG() JSON 문자열을 생성
+* JSON_ARRAYAGG() JSON 배열을 생성
+
+![image](https://user-images.githubusercontent.com/84510455/232812959-a685089c-006e-4401-9633-605324fc3bae.png)
+
+![image](https://user-images.githubusercontent.com/84510455/232818289-6d89ea3d-1273-42c4-a683-2582137b0652.png)
+
+![image](https://user-images.githubusercontent.com/84510455/232818951-ec27face-d92e-41e3-9e50-b831b4a79c82.png)
+
+![image](https://user-images.githubusercontent.com/84510455/232820219-36356b8e-1317-4190-8264-1303cb91e61d.png)
+
+![image](https://user-images.githubusercontent.com/84510455/232821006-032b3ae7-f397-482c-a2b6-3319b794767f.png)
+
+![image](https://user-images.githubusercontent.com/84510455/232822164-51c5ab02-5f98-4b5d-850f-aeaf360d01bc.png)
+
+## SQL - DDL(Integrity Constraints)
+
+### not null
+
+> null 값을 허용하지 않는다.
+
+```sql
+// not null 제약 조건을 가진 테이블 생성
+create or replace table account (account_number varchar(50), branch_name varchar(50), balance int not null);
+
+insert into account values('A-102', 'Downtown', null); // 에러
+```
+
+![image](https://user-images.githubusercontent.com/84510455/232825497-d41e1020-5831-41a4-8119-4b3aca7f81ff.png)
+
+### unique
+
+> 중복된 값을 허용하지 않는다.
+
+```sql
+// unique 제약 조건을 가진 테이블 생성
+create or replace table account (account_number varchar(50), branch_name varchar(50) unique, balance int not null);
+
+insert into account values('A-102', 'Downtown', 123);
+insert into account values('A-102', 'Downtown', 123); // 에러
+```
+
+### check
+
+> 특정 조건을 만족하는 값만 허용한다.
+
+```sql
+// check 제약 조건을 가진 테이블 생성
+create or replace table account (account_number char(10) null, branch_name varchar(50), balance int not null, check(balance >= 0));
+
+insert into account values('A', 'B', -3);
+ERROR 4025 (23000): CONSTRAINT `CONSTRAINT_1` failed for `db`.`account`
+
+// enum형식만 지정
+create or replace table student (name varchar(50) not null, student_id varchar(50), degree_level varchar(50), primary key (student_id), check(degree_level in ('Bachelors', 'Masters', 'Doctorate')));
+
+insert into student values ('a', 'b', 'c');
+ERROR 4025 (23000): CONSTRAINT `CONSTRAINT_1` failed for `db`.`student`
+insert into student values ('a', 'b', 'Bachelors');
+Query OK, 1 row affected (0.001 sec)
+```
+
+### primary key
+
+> null 값을 허용하지 않고 중복된 값을 허용하지 않는다.
+
+```sql
+// primary key 제약 조건을 가진 테이블 생성
+create or replace table student(student_identifier varchar(50), citizen_identifier varchar(50), student_name varchar(50), department varchar(50), primary key (student_identifier));
+```
+
+### foreign key
+
+> 다른 테이블의 특정 컬럼을 참조하는 컬럼
+
+```sql
+CREATE OR REPLACE TABLE person (citizen_identifier VARCHAR(50), age INTEGER, address VARCHAR(50), PRIMARY KEY (citizen_identifier));
+
+CREATE OR REPLACE TABLE student (student_identifier VARCHAR(50), citizen_identifier VARCHAR(50), student_name VARCHAR(50),​department VARCHAR(50),PRIMARY KEY (student_identifier),FOREIGN KEY (citizen_identifier) REFERENCES person (citizen_identifier));
+```
+
+## SQL - Query
+
+### projection
+
+![image](https://user-images.githubusercontent.com/84510455/232831302-42d7d8aa-d4bb-46e3-ae5d-0f80aec20ce5.png)
+
+```sql
+CREATE OR REPLACE TABLE loan (loan_number VARCHAR(50), branch_name VARCHAR(50), amount DOUBLE,PRIMARY KEY (loan_number));
+
+​INSERT INTO loan VALUES ('L-11', 'Round Hill', 900), ('L-14', 'Downtown', 1500), ('L-15', 'Perryridge', 1500), ('L-16', 'Perryridge', 1300), ('L-17', 'Downtown', 1000);
+
+select branch_name from loan; // 기본적으로 all이기 때문에 중복 허용
+
+or
+
+select loan.branch_name from loan;
+
+select distinct branch_name from loan; // 중복 제거
+
+select loan_number, branch_name from loan;
+
+select loan.loan_number distincct from loan;
+```
+
+![image](https://user-images.githubusercontent.com/84510455/232832174-dfe50224-2a66-40c5-ad0c-e4ed8a8cf611.png)
+
+++ 만약 해당 애트리뷰트가 candidate key라면 distinct를 사용하지 않아도 된다.
+
+![image](https://user-images.githubusercontent.com/84510455/232834357-e4ad7972-07e5-48f2-9151-fb4c98b7d606.png)
+
+### alias
+
+> 컬럼 이름을 임시로 변경
+
+```sql
+select MIN(amount) as amount from loan;
+
+select MIN(amount) as min_amount, MAX(amount) as max_amount from loan;
+
+select MIN(amount) as 'amount space test' from loan; // 공백은 문자열 처리
+```
+
+![image](https://user-images.githubusercontent.com/84510455/232833457-8e13bcef-47ad-4173-a5bc-80835a54096b.png)
+
+### where(시그마)
+
+> 특정 조건을 만족하는 튜플만 선택
+
+*시그마를 사용하기 위해선 where절을 사용해야 한다.*
+
+```sql
+select * from loan where branch_name = "Perryridge";
+
+select * from loan where branch_name = "Perryridge" AND amount > 1400;
+
+select * from loan2 where month(date);
+
+select * from loan2 where Year(date)= 2020 -1;
+
+select * from loan2 where branch_name = "Perryridge" and amount < 1400;
+
+select loan_number from loan2 where dayofmonth(date)=29; 
+// loan_number가 primary key여야 한다.
+```
+
+![image](https://user-images.githubusercontent.com/84510455/232836544-d2df7edf-d15a-4fc4-af45-b0c1651a1811.png)
+
+#### like
+
+> 문자열을 비교할 때 사용
+
+* % : 0개 이상의 문자열
+* _ : 1개의 문자열
+
+```sql
+select * from loan2 where loan_number like 'L_1_';
+
+select * from loan2 where date like "%-03-%" OR date like "%-08-%";
+
+select * from loan2 where branch_name like '%Hill';
+```
+
+![image](https://user-images.githubusercontent.com/84510455/232842943-d8d98518-8381-40d3-844b-370eb558dbf7.png)
 
 
+#### UNION
 
+> 두 개의 테이블을 합친다.
 
+```sql
+
+```
