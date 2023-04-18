@@ -699,3 +699,58 @@ insert into grade values(615453, 'J.B.', 10, 30, 30, 30), (615454, 'J.B.', 10, 3
 
 한번에 두개 이상의 튜플을 삽입가능..
 
+### 데이터 삭제
+
+![image](https://user-images.githubusercontent.com/84510455/232667492-7cdc5792-6222-4075-a183-dc08e9d83e1a.png)
+
+```sql
+DELETE FROM [테이블명];
+```
+
+```sql
+delete from grade;
+```
+
+### 데이터 수정
+
+![image](https://user-images.githubusercontent.com/84510455/232668043-550ce541-e6ae-40db-8ea3-895e4dc00f93.png)
+
+*테스트 Relation*  
+```sql
+create or replace table grade (id integer, name varchar(10), attendance double, midterm double, assignment double, final double);
+
+insert into grade values (615453, 'J.B', 10, 30, 30, 30), (2, 'A', 5, 15, 15, 15);
+```
+
+데이터를 업데이트 하기 위해 새로운 애트리뷰트를 추가
+
+```sql
+alter table grade add column (total double);
+```
+
+*값은 null로 들어감*  
+
+```sql
+update grade set total=attendance+midterm+assignment+final;
+```
+
+![image](https://user-images.githubusercontent.com/84510455/232669548-e270b0c6-a83d-4fb5-978c-8d8ac2eb50f3.png)
+
+* 언제 마지막으로 업데이트했는지 추가
+
+date 타입이 데이터 형식 추가
+
+```sql
+alter table grade add column (last_update date);
+```
+
+update문을 통해 last_update에 현재 날짜를 넣어줌
+
+```sql
+update grade set last_update=CURDATE();
+```
+
+*CURDATE() 현재 날짜 반환 함수*
+
+## SQL - Built-in Functions
+
