@@ -473,7 +473,7 @@ $$ account \rightarrow \pi _{account_number, branch_name, balance * 1.05 as bala
 
 ![image](https://user-images.githubusercontent.com/84510455/232645636-c25cf58a-3267-4eb5-839d-ecd4012642ee.png)
 
-## SQL
+## SQL - DDL
 
 Structured Query Language
 
@@ -511,6 +511,8 @@ CREATE DATABASE [데이터베이스명] CHARACTER SET [인코딩] COLLATE [콜�
     -> COLLATE = 'euckr_Korean_ci';
 ```
 
+데이터베이스를 생성할 때 인코딩을 지정하지 않으면 기본적으로 utf8이 설정되기 때문에 한글이 깨지는 경우가 발생한다.
+
 #### Comment
 
 ```sql
@@ -528,6 +530,14 @@ MariaDB [(none)]> CREATE OR REPLACE DATABASE db
 DROP DATABASE [데이터베이스명];
 ```
 
+#### 데이터베이스 삭제(없으면 넘어가기)
+
+```sql
+DROP DATABASE IF EXISTS [데이터베이스명];
+```
+
+없다면 warning이 발생한다.
+
 ### 데이터베이스 목록 조회
 
 ```sql
@@ -542,6 +552,9 @@ USE [데이터베이스명];
 
 ### 테이블 생성
 
+![image](https://user-images.githubusercontent.com/84510455/232663122-1f6c0beb-d847-4def-943f-2e4525280159.png)
+
+
 ```sql
 CREATE TABLE [테이블명] (
     [컬럼명] [데이터타입] [옵션],
@@ -550,11 +563,97 @@ CREATE TABLE [테이블명] (
 );
 ```
 
+나눠서 입력
+```sql
+MariaDB [db]> create table customer2(
+    -> customer varchar(50),
+    -> customer_street varchar(50),
+    -> customer_city varchar(50),
+    -> latitude varchar(50),
+    -> longitude varchar(50),
+    -> last_update varchar(50)
+    -> );
+```
+
+한줄 입력
+```sql
+MariaDB [db]> create table loan (loan_number varchar(50), branch_name varchar(50), amount varchar(50));
+```
+
+다른 데이터 타입  
+```sql
+create or replace table customer2 (customer varchar(50), customer_street varchar(50), customer_city double, longitude double, last_update date);
+```
+
 ### 테이블 삭제
+
+![image](https://user-images.githubusercontent.com/84510455/232663222-9e7768ff-a814-4a23-a764-b79d1c24ef03.png)
 
 ```sql
 DROP TABLE [테이블명];
 ```
+
+```sql
+drop table customer2;
+```
+
+```sql
+ drop table if exists customer2;
+```
+
+### 테이블 수정
+
+> Alter table
+
+![image](https://user-images.githubusercontent.com/84510455/232664275-8481fa62-12d4-424d-a169-8fa1e30156ee.png)
+
+#### 테이블 이름 변경
+
+```sql
+alter table customer2 rename column customer to customer_name;
+```
+
+#### 테이블 컬럼 추가
+
+```sql
+alter table customer2 add column (geopoint POINT);
+```
+
+#### 테이블 컬럼 삭제
+
+```sql
+ALTER TABLE [테이블명] DROP [컬럼명];
+```
+
+```sql
+ALTER TABLE customer DROP customer_city;
+
+alter table customer2 drop column if exists longitude;
+```
+
+*column 옵션*
+
+#### 테이블 컬럼 이름 변경
+
+```sql
+ALTER TABLE [테이블명] CHANGE [기존 컬럼명] [변경할 컬럼명] [데이터타입] [옵션];
+```
+
+```sql
+ALTER TABLE customer CHANGE customer_city city varchar(50);
+```
+
+#### 테이블 컬럼 타입 변경
+
+```sql
+ALTER TABLE [테이블명] MODIFY [컬럼명] [데이터타입] [옵션];
+```
+
+```sql
+ALTER TABLE customer MODIFY city double;
+alter table customer2 modify customer_street varchar(10);
+```
+
 
 ### 테이블 목록 조회
 
@@ -573,4 +672,30 @@ DESC [테이블명];
 ```sql
 SELECT * FROM [테이블명];
 ```
+
+## SQL - DML
+
+```sql
+create table grade (id integer, name varchar(10), attendance double, midterm double, assignment double, final double);
+```
+
+테스트용
+
+### 데이터 삽입
+
+![image](https://user-images.githubusercontent.com/84510455/232666379-daca2999-d46a-488a-867e-a558f3c08e74.png)
+
+```sql
+INSERT INTO [테이블명] VALUES (값1, 값2, ...);
+```
+
+```sql
+insert into grade values(615453, 'J.B.', 10, 30, 30, 30);
+```
+
+```sql
+insert into grade values(615453, 'J.B.', 10, 30, 30, 30), (615454, 'J.B.', 10, 30, 30, 30);
+```
+
+한번에 두개 이상의 튜플을 삽입가능..
 
