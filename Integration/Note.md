@@ -673,6 +673,16 @@ DESC [테이블명];
 SELECT * FROM [테이블명];
 ```
 
+```sql
+select * from customer;
+```
+
+`*`안에 컬럼명을 넣으면 해당 컬럼만 조회한다.
+
+```sql
+select customer, customer_street from customer;
+```
+
 ## SQL - DML
 
 ```sql
@@ -753,4 +763,134 @@ update grade set last_update=CURDATE();
 *CURDATE() 현재 날짜 반환 함수*
 
 ## SQL - Built-in Functions
+
+### string functions
+
+> 문자열 관련 빌트인 함수
+
+```sql
+Create table a (stringValue VARCHAR(50));
+
+insert into a values('jack'), ('123'), ('MariaDB');
+
+// 문자열 길이
+select character_length(stringValue) from a;
+
+// 아스키 코드 변환
+select char(77,97,114,105,97,68,66);
+
+// 문자열을 결합
+select concat(id,'.',name,'.',attendance,'.',midterm) from grade;
+
+select concat_ws(',', id, name, attendance, midterm) from grade;
+
+// 대소문자 변환
+select stringValue, Lower(stringValue), Upper(stringValue) from a;
+
+// 공백 제거
+select v ,trim(v), character_length(trim(v)) from b;
+
+// 문자열 일부 반환
+select v, substring(v, 1, 2) from b;
+
+// 문자열 일부 대체
+select replace(v, '-', ',') from b;
+
+// 문자열에서 특정 문자열의 위치 반환 (없으면 0)
+select v, instr(v, '2') from b;
+
+// 문자열 비교
+select v, strcmp(v, 'p') from b;
+
+// 문자열을 다른 데이터 타입으로 변환
+select cast(substring(v, 2, Character_length(v)) as integer) from b;
+select cast(substring(v, 2, Character_length(v)) as integer) > 400000 from b;
+```
+
+* CHARACTER_LENGTH() 문자열의 길이를 반환  
+* CHAR() 아스키코드를 문자로 반환  
+* CONCAT() 문자열을 연결하여 반환  
+* CONCAT_WS() 문자열을 연결하여 반환하며, 구분자를 지정할 수 있음
+* LOWER() 문자열을 소문자로 변환
+* UPPER() 문자열을 대문자로 변환
+* TRIM() 문자열의 공백을 제거
+* SUBSTRING() 문자열의 일부를 반환
+* REPLACE() 문자열의 일부를 다른 문자열로 대체
+* INSTR() 문자열에서 특정 문자열의 위치를 반환
+* STRCMP() 문자열을 비교하여 0, 1, -1을 반환
+* CAST() 문자열을 다른 데이터 타입으로 변환
+
+
+![image](https://user-images.githubusercontent.com/84510455/232689167-be7ac2d1-a684-4633-93a0-60bc3b344e01.png)
+
+![image](https://user-images.githubusercontent.com/84510455/232691758-3212f0ce-a0bb-47c4-ae2a-3183d29d0c39.png)
+
+![image](https://user-images.githubusercontent.com/84510455/232693206-837c8e18-e281-4ee3-910b-b15bda712f79.png)
+
+### date & time functions
+
+> 날짜/시간 관련 빌트인 함수
+
+
+```sql
+
+// 현재 날짜
+select curdate();
+
+// 현재 시간
+select curtime();
+
+// interval을 사용하여 시간 계산
+select curdate(), curdate() - interval 20 year;
+
+// 시간대 변환
+select curdate(), curtime(), convert_tz(curdate(), '+09:00', '+00:00');
+
+// UNIX_TIMESTAMP() 날짜를 초로 변환
+select FROM_UNIXTIME(UNIX_TIMESTAMP(CURDATE()));
+
+// 날짜 변환
+select dayofweek(curdate()), dayofMonth(curdate()), month(curdate());
+```
+
+* CURDATE() 현재 날짜를 반환
+* CURTIME() 현재 시간을 반환
+* CONVERT_TZ() 시간을 다른 시간대로 변환
+* UNIX_TIMESTAMP() 날짜를 초로 변환
+* FROM_UNIXTIME() 초를 날짜로 변환
+* DAYOFWEEK() 요일을 반환
+* DAYOFMONTH() 일을 반환
+* DAYOFYEAR() 년도의 일을 반환
+* MONTH() 월을 반환
+
+![image](https://user-images.githubusercontent.com/84510455/232697956-fa92afd0-2802-407f-ac55-9e27d6702d43.png)
+
+![image](https://user-images.githubusercontent.com/84510455/232700399-abfa5b23-70c7-4879-8e7d-d17bdd74b650.png)
+
+### Aggregate functions
+
+### Numeric functions
+
+### Control flow functions
+
+### Bit Functions and Operators
+
+### Encryption, Hashing and Compression Functions
+
+### information functions
+
+### miscellaneous functions
+
+### dynamic column functions
+
+### geographic functions
+
+### JSON functions
+
+### spider functions
+
+### window functions
+
+
+
 
