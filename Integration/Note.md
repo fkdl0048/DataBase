@@ -1,6 +1,6 @@
 # DataBase
 
-## 데이터베이스  
+## 데이터베이스란..?
 
 데이터베이스는 여러개의 데이터를 효율적으로 관리하기 위한 시스템이다.
 
@@ -475,10 +475,51 @@ $$ account \rightarrow \pi _{account_number, branch_name, balance * 1.05 as bala
 
 ## SQL
 
+Structured Query Language
+
 ### 데이터베이스 생성
+
+![image](https://user-images.githubusercontent.com/84510455/232649037-5335434e-7ca7-4a15-8ff0-6018f1b04d3a.png)
 
 ```sql
 CREATE DATABASE [데이터베이스명];
+```
+
+#### 데이터베이스 생성(있으면 삭제하고 재생성)
+
+```sql
+CREATE OR REPLACE DATABASE [데이터베이스명];
+```
+
+#### 데이터베이스 생성(있으면 넘어가기)
+
+```sql
+CREATE DATABASE IF NOT EXISTS [데이터베이스명];
+```
+
+*SHOW WARNINGS; 으로 예외 조회*
+
+#### Create speciftion
+
+```sql
+CREATE DATABASE [데이터베이스명] CHARACTER SET [인코딩] COLLATE [콜레이션];
+```
+
+```sql
+ CREATE OR REPLACE DATABASE db
+    -> CHARACTER SET = 'euckr'
+    -> COLLATE = 'euckr_Korean_ci';
+```
+
+#### Comment
+
+```sql
+CREATE DATABASE [데이터베이스명] COMMENT = '데이터베이스 설명';
+```
+
+```sql
+MariaDB [(none)]> CREATE OR REPLACE DATABASE db
+    -> COMMENT = 'Welcome to database';
 ```
 
 ### 데이터베이스 삭제
