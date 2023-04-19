@@ -1190,7 +1190,7 @@ select loan_number from loan2 where dayofmonth(date)=29;
 
 ![image](https://user-images.githubusercontent.com/84510455/232836544-d2df7edf-d15a-4fc4-af45-b0c1651a1811.png)
 
-#### like
+### like
 
 > 문자열을 비교할 때 사용
 
@@ -1208,10 +1208,332 @@ select * from loan2 where branch_name like '%Hill';
 ![image](https://user-images.githubusercontent.com/84510455/232842943-d8d98518-8381-40d3-844b-370eb558dbf7.png)
 
 
-#### UNION
+### UNION
 
-> 두 개의 테이블을 합친다.
+> 두 개의 테이블을 합친다.(합집합)
 
 ```sql
+// 테스트 용 테이블
+CREATE OR REPLACE TABLE borrower (customer_name VARCHAR(50), loan_number VARCHAR(50));
 
+INSERT INTO borrower VALUES ('Adams', 'L-16'),('Curry','L-93'),('Hayes','L-15'),('Jackson','L-14'),('Jones','L-17'),('Smith','L-11'),('Smith','L-23'),('Williams','L-17');
+
+CREATE OR REPLACE TABLE depositor (customer_name VARCHAR(50), account_number VARCHAR(50));
+
+INSERT INTO depositor VALUES ('Hayes', 'A-102'), ('Johnson', 'A-101'), ('Johnson', 'A-201'), ('Jones', 'A-217'), ('Lindsay', 'A-222'), ('Smith', 'A-215'), ('Turner', 'A-305');
+
+// 디폴트로 distinct가 적용되어 있다. 전부 합치려면 union all을 사용한다.
+select customer_name from borrower union select customer_name from depositor;
 ```
+
+![image](https://user-images.githubusercontent.com/84510455/232931135-8c7ec288-5be0-4761-a4a8-6be4dbe4384d.png)
+
+### INTERSECT
+
+> 두 개의 테이블의 교집합을 구한다.
+
+```sql
+select customer_name from borrower intersect select customer_name from depositor;
+```
+
+### EXCEPT
+
+> 두 개의 테이블의 차집합을 구한다.
+
+```sql
+select customer_name from borrower except  select customer_name from depositor;
+```
+
+* table의 순서가 바뀌면 결과도 달라진다.
+
+### ORDER BY
+
+> 튜플을 정렬한다.
+
+```sql
+CREATE OR REPLACE TABLE loan2 (loan_number VARCHAR(50), branch_name VARCHAR(50), amount DOUBLE, date DATE);
+
+INSERT INTO loan2 VALUES ('L-11', 'Round Hill', 900, '2019-03-29'), ('L-14', 'Downtown', 1500, '2019-03-30'), ('L-15', 'Perryridge', 1500, '2019-08-02');
+
+INSERT INTO loan2 VALUES ('L-16', 'Perryridge', 1300, '2019-09-05'), ('L-17', 'Downtown', 1000, '2020-01-13'), ('L-23', 'Redwood', 2000, '2020-02-01'), ('L-93', 'Mianus', 500, '2021-03-02');
+
+// 오름차순
+select loan_number, date from loan2 order by date asc;
+
+// 내림차순
+select loan_number, date from loan2 order by date desc;
+
+// 월을 기준으로 오름차순 정렬
+select loan_number, date from loan2 order by MONTH(date) asc;
+
+// 순서대로 월, 년, 일을 기준으로 내림차순 정렬
+select loan_number, date from loan2 order by month(date) desc, year(date) desc, day(date) desc;
+```
+
+![image](https://user-images.githubusercontent.com/84510455/232935266-8f2d50ca-bbd0-464b-a184-d60726d04f7a.png)
+
+### LIMIT
+
+> 튜플의 개수를 제한한다.
+
+```sql
+// 2개만 출력
+select * from loan2 limit 2;
+
+// 정렬된 값에서 1개만 출력
+select loan_number, date from loan2 order by month(date) desc, year(date) desc, day(date) desc limit 1;
+
+// 정렬된 값에서 1개를 건너뛰고 1개만 출력 즉, 두번 쨰
+select loan_number, date from loan2 order by month(date) desc, year(date) desc, day(date) desc limit 1, 1;
+
+create or replace table a(a int);
+
+insert into a values(1), (2), (3), (4), (5), (6), (7), (8), (9);
+
+select * from a limit 4, 4; // 페이지 구하기..
+```
+
+### GROUP BY
+
+> 특정 속성을 기준으로 그룹을 만들고, 그룹별로 집계함수를 적용한다.
+
+```sql
+// 전체 합
+select sum(salary) from pt_works;
+
+// 각 branch_name 별 합
+select sum(salary) from pt_works group by branch_name;
+
+select branch_name, sum(salary) from pt_works group by branch_name;
+
+// 평균 값
+select branch_name, avg(salary) from pt_works group by branch_name;
+
+// 평균 값이 2000 이상인 것만 출력
+select branch_name, avg(salary) from pt_works group by branch_name having avg(salary) > 2000;
+
+// branch_name이 두개 이상인 것만 출력
+select avg(salary) from pt_works group by branch_name having count(*) > 1;
+```
+
+**그룹의 경우엔 where가 아닌 having을 사용한다.**
+
+![image](https://user-images.githubusercontent.com/84510455/232937952-ded8f052-9955-44d1-9912-3628858e6fea.png)
+
+### JOIN
+
+> 두 개 이상의 테이블을 연결하여 튜플을 검색한다.
+
+```sql
+CREATE OR REPLACE TABLE loan (loan_number VARCHAR(50), branch_name VARCHAR(50), amount DOUBLE,PRIMARY KEY (loan_number));
+
+INSERT INTO loan VALUES ('L-11', 'Round Hill', 900), ('L-14', 'Downtown', 1500), ('L-15', 'Perryridge', 1500), ('L-16', 'Perryridge', 1300), ('L-17', 'Downtown', 1000);
+
+// JOIN
+select * from borrower join loan;
+
+select customer_name from loan join borrower where branch_name = "Perryridge" and borrower.loan_number = loan.loan_number;
+
+// 가장 큰 값 찾기
+select balance from account except (select a1.balance from account as a1, account as a2 where a1.balance < a2.balance);
+
+// 테스트 테이블
+CREATE OR REPLACE TABLE customer (customer VARCHAR(50), customer_street VARCHAR(50), customer_city VARCHAR(50),PRIMARY KEY (customer));
+```
+
+가장 큰 값은 빌트인 max를 써도 되고 위 처럼 cartisian product를 사용해서 가장 크지 않은 값들의 집합을 차집합하여 구할 수 있다.
+
+![image](https://user-images.githubusercontent.com/84510455/232940055-026f6ef7-e7d9-4b3d-b051-a2b3ce6c8901.png)
+
+#### NATURAL JOIN
+
+> 두 테이블의 공통 속성을 기준으로 튜플을 검색한다.
+
+```sql
+// 공통된 loan.number를 기준으로 join.. 하지만 복잡함
+select * from loan, borrower where loan.loan_number = borrower.loan_number;
+
+// NATURAL JOIN 사용
+select * from loan Natural join borrower;
+```
+
+![image](https://user-images.githubusercontent.com/84510455/232947051-e1ecd172-b277-4e6e-aca5-67f1596e9bc5.png)
+
+#### Theta JOIN
+
+> 조건을 만족하는 튜플을 검색한다.
+
+customer_name과 customer의 값이 같지만 join을 하면 공통된 속성이 없기 때문에 cartisian product가 된다.
+
+따라서 theta join을 사용하여 조건을 만족하는 튜플을 검색한다.
+
+```sql
+select * from customer join depositor on customer.customer = depositor.customer_name;
+
+select * from customer join depositor where customer.customer = depositor.customer_name;
+```
+
+둘다 동일한 기능을 함
+
+on은 좀 더 명확
+
+#### Outer JOIN
+
+```sql
+CREATE TABLE employee (employee_name VARCHAR(50), street VARCHAR(50), city VARCHAR(50));
+
+INSERT INTO employee VALUES ('Coyote', 'Toon', 'Hollywoord'), ('Rabbit', 'Tunnel', 'Carrotville'), ('Smith', 'Revolver', 'Death Valley'), ('Williams', 'Seaview', 'Seattle');
+
+CREATE TABLE ft_works (employee_name VARCHAR(50), branch_name VARCHAR(50), salary INTEGER);
+
+INSERT INTO ft_works VALUES ('Coyote', 'Mesa', 1500), ('Rabbit', 'Mesa', 1300), ('Gates', 'Redmond', 5300), ('Williams', 'Redmond', 1500);
+
+// left outer join
+select * from employee left outer join ft_works on employee.employee_name = ft_works.employee_name;
+
+// natural left outer join
+select * from employee natural left outer join ft_works;
+
+// natural right left outer join
+select * from employee natural left outer join ft_works union select * from employee natural right outer join ft_works;
+```
+
+![image](https://user-images.githubusercontent.com/84510455/232949195-13818887-ba9b-4e9a-8e93-b219f4254849.png)
+
+![image](https://user-images.githubusercontent.com/84510455/232949410-c8f667f8-d4f2-4e5b-b6e9-2b0e13b813a7.png) 
+
+![image](https://user-images.githubusercontent.com/84510455/232949777-42c1fcd4-2d3d-4004-ab97-cd1eb4581da4.png)
+### As
+
+> 테이블의 이름을 바꾸거나, 컬럼의 이름을 바꾼다.
+
+```sql
+select * from account as a1, account as a2;
+
+select customer from customer join (select customer_street, customer_city from customer where customer = "Smith") as smith_address where customer.customer_street = smith_address.customer_street and customer.customer_city = smith_address.customer_city;
+```
+
+### Select - DML + DQL
+
+> insert로 select결과를 넣을 수 있다.
+
+```sql
+INSERT INTO table(column1, column2, column3, …) SELECT column1, column2, column3, … FROM table WHERE condition;
+
+// 자기 자신을 넣기 ++ Primary key가 있으면 안됨
+insert into loan select * from loan;
+
+// amount가 1000보다 큰 것만 넣기
+insert into loan select * from loan where amount > 1000;
+```
+
+### Delete - DML
+
+```sql
+// amount가 null인 것을 삭제
+delete from loan where amount is null;
+```
+
+*null에 대한 eqpul은 `is`로 체크*
+
+## SQL - Subquery
+
+![image](https://user-images.githubusercontent.com/84510455/232952661-caf271ec-14af-41d3-a096-5850219b7a78.png)
+
+
+* scalar subquery : 하나의 값만 반환하는 subquery
+* multi column subquery : 여러개의 열이 반환되는 subquery
+* multi row subquery : 여러개의 행이 반환되는 subquery
+
+```sql
+// scalar subquery
+select sum(balance) from account where branch_name = (select branch_name from loan where loan_number='L-14');
+
+// multi column subquery
+select * from staff where (name, age) = (select name, age from customer where name='Valerius' and age=61);
+
+// multi row subquery
+select customer_name from borrower where loan_number in (select loan_number from loan where branch_name="Perryridge");
+
+// multi row and multi column subquery
+select customer from customer where (customer_street, customer_city) in (select customer_street, customer_city from customer where customer = "Hayes");
+```
+
+* multi row subquery의 경우 in을 사용한다.(반복)
+
+*`=` 대신 in을 사용해도 된다.*
+
+### Subquery: In
+
+> subquery의 결과가 in의 값과 같은지 비교한다.
+
+```sql
+// multi row and multi column subquery
+select customer from customer where (customer_street, customer_city) in (select customer_street, customer_city from customer where customer = "Hayes");
+```
+
+### Subquery: Any, All
+
+> subquery의 결과 중 하나라도 조건을 만족하면 true
+
+```sql
+​CREATE TABLE A (point INTEGER);CREATE TABLE B (point INTEGER);
+INSERT INTO A VALUES (89),(50),(60),(65),(85);
+INSERT INTO B VALUES (99),(30),(50),(60),(75);
+
+select * from b where point > all(select * from a);
+select * from b where point > any(select * from a);
+
+// 다른 풀이
+select * from a where a.point < all(select max(point) from b);
+```
+
+* any: 하나라도 만족하면 true
+* all: 모두 만족해야 true
+
+### Subquery: Exists
+
+> subquery의 결과가 존재하면 true
+
+```sql
+select * from depositor where exists (select * from borrower where depositor.customer_name = borrower.customer_name);
+```
+
+### Subquery: **from**
+
+> subquery의 결과를 from에 넣어서 사용한다.
+
+```sql
+select * from (select * from loan) as t;
+// 같은 식
+select * from loan;
+
+// 데이블의 학생당 평균 계산
+select name, avg(score) as avg_score from student2 group by name;
+
+// 학생들의 평균 점수 계산
+select avg(avg_score) from (select name, avg(score) as avg_score from student2 group by name) as t;
+```
+
+서브쿼리에 from절 기능을 사용하려면 **as**를 사용해야 한다.
+
+## View
+
+![image](https://user-images.githubusercontent.com/84510455/232975647-9a488378-42cb-46d3-b8ae-768b3c44aa04.png)
+
+```sql
+create view loanX as select * from loan where amount >= 1400;
+
+select * from loanx;
+
+create view loanP (branch_name, sum_amount) as select branch_name, sum(amount) as sum_amount from loan group by branch_name;
+```
+
+### View - expansion
+
+```sql
+drop view if exists loanX;
+```
+
+## Privilege
+
