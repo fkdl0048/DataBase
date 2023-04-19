@@ -291,7 +291,7 @@ relation1의 tuple a에 대해서 relation2의 모든 tuple을 곱한다.
 
 > 문법
 
-$$ \rho new\_relation\_name(original\_relation) $$
+$$ \rho _{new\_relation\_name(original\_relation)} $$
 
 * 예제 1
 
@@ -321,13 +321,17 @@ $$ (relation1)\bowtie(relation2) $$
 
 *nuatural join*
 
-$$ \pi _{branch\_name(\sigma _{customer_city="Harrison"(customer)} \bowtie depositor \bowtie account)} $$
+$$ \pi _{branch\_name(\sigma _{customer\_city="Harrison"(customer)} \bowtie depositor \bowtie account)} $$
 
 #### Theta Join
 
 > 문법
 
 $$ (relation1)\bowtie_{\theta}(relation2) = \sigma_{\theta}(relation_1 \times relation_2)$$
+
+> 예제
+
+$$ \pi _{customer, customer\_street, customer\_city}(customer \bowtie _{customer.customer = depositor.customer\_name} depositor) $$
 
 #### Division
 
@@ -452,10 +456,10 @@ r2에 Cartesian Product을 통해 200을 추가한다.
 
 depositor에는 r1을 Projection하여 추가한다.
 
-$$ r1 \rightarrow \sigma _{branch\_name = "Perryidge"}(borrower \Join loan) $$
-$$ r2 \rightarrow \pi _{loan_number, branch_name}(r1) $$
-$$ account \rightarrow account \cup (r_2 \times {(200)}) $$
-$$ depositor \rightarrow depositor \cup \pi _{customer_name, loan_number}(r1) $$
+$$ r1 \leftarrow \sigma _{branch\_name = "Perryidge"}(borrower \Join loan) $$
+$$ r2 \leftarrow \pi _{loan_number, branch_name}(r1) $$
+$$ account \leftarrow account \cup (r_2 \times \{(200)\}) $$
+$$ depositor \leftarrow depositor \cup \pi _{customer\_name, loan\_number}(r1) $$
 
 ##### UPDATE
 
@@ -463,13 +467,13 @@ Generalized Projection을 사용해서 계산한다.
 
 > 문법
 
-$$ r \rightarrow \pi _{F_1, F_2, ...F_n}(r) $$
+$$ r \leftarrow \pi _{F_1, F_2, ...F_n}(r) $$
 
 > 예제
 
 Relation의 balance를 5% 증가시킨다.
 
-$$ account \rightarrow \pi _{account_number, branch_name, balance * 1.05 as balance}(account) $$
+$$ account \leftarrow \pi _{account\_number, branch\_name, balance * 1.05 AS balance}(account) $$
 
 ![image](https://user-images.githubusercontent.com/84510455/232645636-c25cf58a-3267-4eb5-839d-ecd4012642ee.png)
 
