@@ -411,17 +411,17 @@ null일 경우 제외..
 
 > 문법
 
-$$ r \rightarrow r - E $$
+$$ r \leftarrow r - E $$
 
 r에서 E를 삭제한다.
 
 > 예제
 
-$$ depositor \rightarrow depositor - \sigma_{customer_name = "Smith"(depositor)} $$
+$$ depositor \leftarrow depositor - \sigma_{customer_name = "Smith"(depositor)} $$
 
 *Smith튜플만 제거한 릴레이션 반환*
 
-$$ loan \rightarrow loan - \sigma_{amount \ge 1000 \land amount \le 1300}(loan) $$
+$$ loan \leftarrow loan - \sigma_{amount \ge 1000 \land amount \le 1300}(loan) $$
 
 *전체 loan에서 amount가 1000과 1300사이의 값만 찾기*
 
@@ -436,13 +436,13 @@ Projection을 사용하여 삭제할 Relation에 맞는 Degree, Domain을 가진
 
 > 문법
 
-$$ r \rightarrow r \cup E $$
+$$ r \leftarrow r \cup E $$
 
 r에 E를 추가한다.
 
 > 예제
 
-$$ account \rightarrow account \cup \{(A-973, "Perryidge", 1200)\} $$
+$$ account \leftarrow account \cup \{(A-973, "Perryidge", 1200)\} $$
 
 ![image](https://user-images.githubusercontent.com/84510455/232643766-d69e0b75-acb5-4879-92cf-d7e05ba197a1.png)
 
