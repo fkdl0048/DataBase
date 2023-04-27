@@ -1541,3 +1541,6 @@ drop view if exists loanX;
 
 ## Privilege
 
+*중간고사 범위*
+
+## 
