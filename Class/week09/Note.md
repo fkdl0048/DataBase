@@ -58,3 +58,13 @@ ex) 문자열의 길이를 해시 함수로 사용할 수 있다.
 B_Tree는 General_Way_Tree이다.
 
 그려볼 것..
+
+가장 기본적인 밸런스를 맞추는 작업은 아래로 내리는 것이 아닌 위로 올려 부모를 확보하는 작업이다.(재귀적)  
+
+
+
+![Image](https://user-images.githubusercontent.com/84510455/235564305-72ae90b5-3f78-4d6f-9e9c-2e02abc9006c.png)
+
+#### 삽입
+
+#### 삭제
